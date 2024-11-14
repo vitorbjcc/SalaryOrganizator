@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <title>Salary Organizator</title>
+    <style>
+        body
+        {
+            background-color: #45459D;
+        }
+
+        h1
+        {
+            font-family: "Roboto", Helvetica, Arial;
+            color: #9696ff;
+            text-align: center;
+        }
+
+        p
+        {
+            color: #9696ff;
+        }
+
+        a
+        {
+            color: #9696ff;
+        }
+
+        main
+        {
+            text-align: center;
+            background-color: #1A1A6F;
+            padding: 35px;
+            width: 750px;
+            height: 610px;
+            margin: auto;
+            border-radius: 25px;
+            font-family: "Roboto", Helvetica, Arial;
+        }
+
+        #graph
+        {
+            border: 10px solid #9696ff;
+            border-radius: 10px;
+            background-color: #fff;
+        }
+
+        #freemoney
+        {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        input
+        {
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            border: 0;
+            width: 250px;
+            outline: none;
+            font-family: "Roboto", Helvetica, Arial;
+            font-size: 15pt;
+            background-color: #9696ff;
+            border: 2px solid #45459D;
+            color: #45459D;
+        }
+
+        input::placeholder
+        {
+            color: #45459D;
+        }
+
+        button
+        {
+            transition: .5s;
+            padding: 10px;
+            border-radius: 25px;
+            border: 0;
+            width: 250px;
+            cursor: pointer;
+            font-family: "Roboto", Helvetica, Arial;
+            font-size: 15pt;
+            background-color: #9696ff;
+            color: #45459D;
+        }
+
+        button:hover
+        {
+            transition: .5s;
+            background-color: #5959cc;
+            color: #9696ff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Salary Organizator</h1>
+    <main>
+        <i><a href="https://www.amazon.com.br/JavaScript-Guia-Definitivo-David-Flanagan/dp/856583719X/ref=sr_1_1?crid=1BFGCSJGD7PLS&dib=eyJ2IjoiMSJ9.nm4Z-fWPS1mZsbLMjoKV_yJuVHXlFKYjtPEkkvW3h5U6UwVE4CJvK5SLWq6jq7L6VwQzGi-L4k0t7dmBhsNG2StZAcR8rRX5uqJXggsAbO7H6lT_qMXnj21LgeiCbHsDccs_KI78djDBMPDpv5LZwcS204qQz5Ib9XveNJAX-tX6lFoahMCyIvr9a3z9ceouepAJ6Q5YC6AoTO8R-h9hXgYzXmHR-rpfo-iR6_17xLtpNYFmpsRILhSZ5GMEXqXUcrF_vITkUU-QRFIfiqoNGrkmY-dlQdIIEWY9Z2DH1eo.Ft5GV9Hd8NMIoeqAj-CHUhN8E9xsY4KOksAbthg0pz8&dib_tag=se&keywords=javascript+o+guia+definitivo&qid=1731534017&sprefix=javascript%2Caps%2C249&sr=8-1&ufe=app_do%3Aamzn1.fos.6121c6c4-c969-43ae-92f7-cc248fc6181d" target="_blank">How I learn JavaScript</a></i>
+        <p>Your salary: <input type="text" id="salary" placeholder="Salary"></p>
+        <p>How much money you spend on food?: <input type="text" id="food" placeholder="Food"></p>
+        <p>How much money you spend on taxes?: <input type="text" id="tax" placeholder="Taxes"></p>
+        <p><button onclick="calculate();">Calculate</button></p>
+        <div class="output">
+            <p><strong>Chart:</strong></p>
+            <p><canvas width="400" height="250" id="graph"></canvas></p>
+            <p>Free money: $<span id="freemoney"></span></p>
+        </div>
+    </main>
+    <script>
+        function chart(salary, food, tax, freeAmount)
+        {
+            // Localiza elemento <canvas> no documento
+            var graph = document.getElementById("graph");
+
+            // Caso nao tenha recebido argumentos, sinal para apagar grafico
+            if (arguments.length === 0)
+            {
+                // Apaga grafico e retorna
+                return graph.width = graph.width;
+            }
+
+            // Apaga possivel grafico antigo
+            graph.width = graph.width;
+
+            // Cria variavel para largura e altura do grafico
+            var width = graph.width;
+            var height = graph.height;
+
+            // Cria variavel do contexto do canvas (API que faz todo o desenho)
+            var g = graph.getContext("2d");
+
+            // Cria funcao para formatar numeros automaticamente
+            function formatNumber(n)
+            {
+                return Number.isInteger(n) ? n : n.toFixed(2);
+            }
+
+            // Cria funcao que converte quantias para pixels
+            function amountToY(a)
+            {
+                return -((103.5/salary*a)+1);
+            }
+
+            // Cria 3 linhas com valores para contribuir no entendimento dos valores do grafico
+            // Comeca de (0,0)
+            g.moveTo(0, 0);
+
+            // Cria texto
+            g.fillText(formatNumber(salary), 20, height/6*2);
+
+            // Cria retangulo espesso
+            g.fillRect(55, height/6*2-3.5, width-105, .5);
+
+            // Repete o processo com altura diferente
+            g.fillText(formatNumber(salary/2), 20, height/6*3+10);
+            
+            g.fillRect(55, height/6*3-3.5+10, width-105, .5);
+
+            // Repete o processo com altura diferente
+            g.fillText(0, 20, height/6*5-(height/12));
+
+            g.fillRect(55, height/6*5-3.5-(height/12), width-105, .5);
+
+            // Fecha figuras
+            g.closePath();
+
+            // Define fonte
+            g.font = "bold 12px sans-serif";
+
+            // Cria coluna de o quanto a pessoa gasta com comida
+            // Cria nova figura
+            g.beginPath();
+
+            // Volta para o comeco
+            g.moveTo(0, 0);
+
+            // Escolhe cor vermelha
+            g.fillStyle = "#f55442";
+
+            // Cria retangulo
+            g.fillRect((width-105)/3*1, height/6*5-3.5-(height/12), 35, amountToY(food));
+
+            // Rotula texto
+            g.fillText("Food spends", 20, 20);
+
+            // Fecha figura
+            g.closePath();
+
+            // Cria coluna de o quanto a pessoa gasta com comida
+            // Cria nova figura
+            g.beginPath();
+
+            // Volta para o comeco
+            g.moveTo(0, 0);
+
+            // Escolhe cor azul
+            g.fillStyle = "#1c99d4";
+
+            // Cria retangulo
+            g.fillRect((width-105)/3*2, height/6*5-3.5-(height/12), 35, amountToY(tax));
+
+            // Rotula texto
+            g.fillText("Taxes spends", 20, 35);
+
+            // Fecha figura
+            g.closePath();
+
+            // Cria coluna de dinheiro livre
+            // Cria nova figura
+            g.beginPath();
+
+            // Volta para o comeco
+            g.moveTo(0, 0);
+
+            // Escolhe cor verde
+            g.fillStyle = "#34eb7a";
+
+            // Cria retangulo
+            g.fillRect((width-105)/3*3, height/6*5-3.5-(height/12), 35, amountToY(freeAmount));
+
+            // Rotula texto
+            g.fillText("Free money", 20, 50);
+
+            // Fecha figura
+            g.closePath();
+        }
+
+        function calculate()
+        {
+            // Localiza elementos HTML onde o usuario inseriu os dados ja convertidos para float
+            var salary = parseFloat(document.getElementById("salary").value);
+            var food = parseFloat(document.getElementById("food").value);
+            var tax = parseFloat(document.getElementById("tax").value);
+
+            // Localiza elemento HTML onde vou inserir o resultado dos calculos
+            var freemoney = document.getElementById("freemoney");
+
+            // Calcula o quanto a pessoa tem de dinheiro livre para gastar
+            var freeAmount = salary - (food + tax);
+
+            // Checa se o valor e finito
+            if (isFinite(freeAmount))
+            {
+                // Isso significa que o usuario inseriu os dados corretamente
+                // Insere resultado no <span> e cria grafico
+                freemoney.innerHTML = freeAmount;
+
+                chart(salary, food, tax, freeAmount);
+            }
+            else
+            {
+                // Caso o valor seja NaN, Infinity, etc
+                // Apagar grafico e quaisquer resultados no <span>
+                freemoney.innerHTML = "";
+
+                chart();
+            }
+        }
+    </script>
+</body>
+</html>
