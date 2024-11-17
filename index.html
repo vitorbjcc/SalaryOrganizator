@@ -248,7 +248,7 @@
             {
                 // Isso significa que o usuario inseriu os dados corretamente
                 // Insere resultado no <span> e cria grafico
-                freemoney.innerHTML = freeAmount;
+                freemoney.innerHTML = freeAmount.toFixed(2);
 
                 chart(salary, food, tax, freeAmount);
             }
